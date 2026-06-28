@@ -12,9 +12,11 @@ variables:
 stages:
 
 # -----------------------
-# TERRAFORM
+# TERRAFORM STAGE
 # -----------------------
 - stage: Terraform
+  displayName: Terraform Validate & Plan
+
   jobs:
   - job: tf
     steps:
@@ -35,10 +37,12 @@ stages:
       workingDirectory: terraform
       displayName: Plan
 
+
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
 - stage: Build
+  displayName: Build & Push Docker Image
   dependsOn: Terraform
 
   jobs:
@@ -51,6 +55,7 @@ stages:
         repository: $(imageName)
         command: buildAndPush
         Dockerfile: Dockerfile
+        buildContext: .
         tags: |
           $(tag)
 
@@ -59,6 +64,7 @@ stages:
 # DEPLOY TO VM
 # -----------------------
 - stage: Deploy
+  displayName: Deploy to Azure VM
   dependsOn: Build
 
   jobs:
@@ -70,15 +76,16 @@ stages:
         sshEndpoint: AzureVM-SSH
         runOptions: commands
         commands: |
+
           echo "Logging into ACR..."
 
-          docker login cloudtaskacr12345.azurecr.io \
+          docker login $(acrLogin) \
             -u $(ACR_USERNAME) \
             -p $(ACR_PASSWORD)
 
           echo "Pulling image..."
 
-          docker pull cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
+          docker pull $(acrLogin)/$(imageName):$(tag)
 
           echo "Stopping old container..."
 
@@ -88,4 +95,4 @@ stages:
           echo "Starting new container..."
 
           docker run -d -p 5000:5000 --name cloudtask \
-            cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
+            $(acrLogin)/$(imageName):$(tag)
