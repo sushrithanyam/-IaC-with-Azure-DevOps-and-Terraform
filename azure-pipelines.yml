@@ -78,18 +78,24 @@ stages:
         runOptions: commands
         commands: |
           set -e
+
           echo "Logging into ACR..."
+
           docker login $(acrLogin) -u "$(ACR_USERNAME)" -p "$(ACR_PASSWORD)"
 
           echo "Pulling image..."
 
-          docker pull $(acrLogin)/$(imageName):$(tag)
+          docker pull $(acrLogin)/cloudtask-pro:v1
 
-          echo "Stopping container..."
+          echo "Checking images..."
+
+          docker images
+
+          echo "Stopping old container..."
 
           docker stop cloudtask || true
           docker rm cloudtask || true
 
-          echo "Starting container..."
+          echo "Starting new container..."
 
-          docker run -d -p 5000:5000 --restart unless-stopped --name cloudtask $(acrLogin)/$(imageName):$(tag)
+          docker run -d -p 5000:5000 --restart unless-stopped --name cloudtask $(acrLogin)/cloudtask-pro:v1
