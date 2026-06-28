@@ -57,7 +57,7 @@ stages:
         repository: $(imageName)
         command: buildAndPush
         Dockerfile: docker/Dockerfile
-        buildContext: docker
+        buildContext: .
         tags: |
           $(tag)
 
