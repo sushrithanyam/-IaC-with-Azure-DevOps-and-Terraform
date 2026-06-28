@@ -78,23 +78,16 @@ stages:
         sshEndpoint: AzureVM-SSH
         runOptions: commands
         commands: |
+          set -e
 
           echo "Logging into ACR..."
-
-          docker login $(acrLogin) \
-            -u $(ACR_USERNAME) \
-            -p $(ACR_PASSWORD)
+          docker login cloudtaskacr12345.azurecr.io -u $cloudtaskacr12345 -p $8NRfp8MUMUyVphJkPMzUD6m84dg5kdiwbEJTJ8wSY6PzhCiXstVGJQQJ99CFAC1i4TkEqg7NAAACAZCRzrQd
 
           echo "Pulling image..."
-
-          docker pull $(acrLogin)/$(imageName):$(tag)
-
-          echo "Stopping old container..."
+          docker pull cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
 
           docker stop cloudtask || true
           docker rm cloudtask || true
 
-          echo "Starting new container..."
-
-          docker run -d -p 5000:5000 --name cloudtask \
-            $(acrLogin)/$(imageName):$(tag)
+          echo "Starting container..."
+          docker run -d -p 5000:5000 --name cloudtask cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
