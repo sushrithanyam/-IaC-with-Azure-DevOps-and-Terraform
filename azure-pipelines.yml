@@ -73,25 +73,25 @@ stages:
     steps:
 
     - task: SSH@0
-  inputs:
-    sshEndpoint: AzureVM-SSH
-    runOptions: commands
-    commands: |
-      set -e
+      inputs:
+       sshEndpoint: AzureVM-SSH
+       runOptions: commands
+       commands: |
+          set -e
 
-      echo "STEP 1: LOGIN"
+          echo "STEP 1: LOGIN"
 
-      docker login cloudtaskacr12345.azurecr.io -user "$(ACR_USERNAME)" -password "$(ACR_PASSWORD)"
+          docker login cloudtaskacr12345.azurecr.io -user "$(ACR_USERNAME)" -password "$(ACR_PASSWORD)"
 
-      echo "STEP 2: PULL"
+          echo "STEP 2: PULL"
 
-      docker pull cloudtaskacr12345.azurecr.io/cloudtask-pro:v1
+          docker pull cloudtaskacr12345.azurecr.io/cloudtask-pro:v1
 
-      echo "STEP 3: STOP OLD"
+          echo "STEP 3: STOP OLD"
 
-      docker stop cloudtask || true
-      docker rm cloudtask || true
+          docker stop cloudtask || true
+          docker rm cloudtask || true
 
-      echo "STEP 4: RUN"
+          echo "STEP 4: RUN"
 
-      docker run -d -p 5000:5000 --restart unless-stopped --name cloudtask cloudtaskacr12345.azurecr.io/cloudtask-pro:v1
+          docker run -d -p 5000:5000 --restart unless-stopped --name cloudtask cloudtaskacr12345.azurecr.io/cloudtask-pro:v1
