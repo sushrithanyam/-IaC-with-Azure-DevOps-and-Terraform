@@ -15,41 +15,25 @@ stages:
 # TERRAFORM STAGE
 # -----------------------
 - stage: Terraform
-  displayName: Terraform Validate & Plan
-
   jobs:
   - job: tf
     steps:
 
-    # ✅ LOGIN TO AZURE FIRST (IMPORTANT)
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'AzureRM-Service-Connection'
         scriptType: bash
         scriptLocation: inlineScript
+        addSpnToEnvironment: true
         inlineScript: |
-          echo "Logged into Azure"
 
-    # Terraform install
-    - task: TerraformInstaller@1
-      inputs:
-        terraformVersion: latest
+          echo "Logging into Azure done"
 
-    # INIT
-    - script: terraform init
-      workingDirectory: terraform
-      displayName: Init
+          cd terraform
 
-    # VALIDATE
-    - script: terraform validate
-      workingDirectory: terraform
-      displayName: Validate
-
-    # PLAN
-    - script: terraform plan
-      workingDirectory: terraform
-      displayName: Plan
-      
+          terraform init
+          terraform validate
+          terraform plan
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
