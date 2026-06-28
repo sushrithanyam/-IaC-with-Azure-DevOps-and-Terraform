@@ -77,25 +77,25 @@ stages:
         sshEndpoint: AzureVM-SSH
         runOptions: commands
         commands: |
-          set -e
+          set -x
 
-          echo "Logging into ACR..."
+          echo "STEP 1: LOGIN"
 
           docker login $(acrLogin) -u "$(ACR_USERNAME)" -p "$(ACR_PASSWORD)"
 
-          echo "Pulling image..."
+          echo "STEP 2: PULL"
 
           docker pull $(acrLogin)/cloudtask-pro:v1
 
-          echo "Checking images..."
+          echo "STEP 3: IMAGES"
 
           docker images
 
-          echo "Stopping old container..."
+          echo "STEP 4: STOP"
 
           docker stop cloudtask || true
           docker rm cloudtask || true
 
-          echo "Starting new container..."
+          echo "STEP 5: RUN"
 
           docker run -d -p 5000:5000 --restart unless-stopped --name cloudtask $(acrLogin)/cloudtask-pro:v1
