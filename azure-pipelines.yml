@@ -23,22 +23,20 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - task: TerraformCLI@0
-      inputs:
-        command: init
-        workingDirectory: 'terraform'
-        environmentServiceName: 'AzureRM-Service-Connection'
+    - script: |
+        cd terraform
+        terraform init
+      displayName: Init
 
-    - task: TerraformCLI@0
-      inputs:
-        command: validate
-        workingDirectory: 'terraform'
+    - script: |
+        cd terraform
+        terraform validate
+      displayName: Validate
 
-    - task: TerraformCLI@0
-      inputs:
-        command: plan
-        workingDirectory: 'terraform'
-        environmentServiceName: 'AzureRM-Service-Connection'
+    - script: |
+        cd terraform
+        terraform plan
+      displayName: Plan
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
