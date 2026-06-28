@@ -23,20 +23,23 @@ stages:
       inputs:
         terraformVersion: 'latest'
 
-    - script: |
-        cd terraform
-        terraform init
-      displayName: Init
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'AzureRM-Service-Connection'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          cd terraform
 
-    - script: |
-        cd terraform
-        terraform validate
-      displayName: Validate
+          export ARM_USE_MSI=false
+          export ARM_CLIENT_ID=$servicePrincipalId
+          export ARM_CLIENT_SECRET=$servicePrincipalKey
+          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
 
-    - script: |
-        cd terraform
-        terraform plan
-      displayName: Plan
+          terraform init
+          terraform validate
+          terraform plan
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
