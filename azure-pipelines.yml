@@ -77,7 +77,7 @@ stages:
         sshEndpoint: AzureVM-SSH
         runOptions: commands
         commands: |
-          set -x
+        
 
           echo "STEP 1: LOGIN"
 
