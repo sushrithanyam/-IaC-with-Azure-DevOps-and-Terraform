@@ -76,13 +76,10 @@ stages:
       inputs:
         sshEndpoint: AzureVM-SSH
         runOptions: commands
-        envVars: |
-          ACR_USERNAME=$(ACR_USERNAME)
-          ACR_PASSWORD=$(ACR_PASSWORD)
         commands: |
           set -e
           echo "Logging into ACR..."
-          docker login $(acrLogin) -u "$ACR_USERNAME" -p "$ACR_PASSWORD"
+          docker login $(acrLogin) -u "$(ACR_USERNAME)" -p "$(ACR_PASSWORD)"
 
           echo "Pulling image..."
 
