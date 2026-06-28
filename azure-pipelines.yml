@@ -19,29 +19,24 @@ stages:
   - job: tf
     steps:
 
-    - task: AzureCLI@2
+    - task: TerraformInstaller@1
       inputs:
-        azureSubscription: 'AzureRM-Service-Connection'
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
+        terraformVersion: 'latest'
 
-          echo "Installing Terraform..."
+    - script: |
+        cd terraform
+        terraform init
+      displayName: Init
 
-          sudo apt-get update -y
-          sudo apt-get install -y wget unzip
+    - script: |
+        cd terraform
+        terraform validate
+      displayName: Validate
 
-          wget https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip
-          unzip terraform_1.7.5_linux_amd64.zip
-          sudo mv terraform /usr/local/bin/
-
-          terraform -version
-
-          cd $(Build.SourcesDirectory)/terraform
-
-          terraform init
-          terraform validate
-          terraform plan
+    - script: |
+        cd terraform
+        terraform plan
+      displayName: Plan
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
