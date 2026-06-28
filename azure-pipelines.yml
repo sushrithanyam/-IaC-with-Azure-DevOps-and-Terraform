@@ -1,0 +1,89 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  imageName: cloudtask-pro
+  acrLogin: cloudtaskacr12345.azurecr.io
+  tag: $(Build.BuildId)
+
+stages:
+
+# -----------------------
+# TERRAFORM
+# -----------------------
+- stage: Terraform
+  jobs:
+  - job: tf
+    steps:
+
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: latest
+
+    - script: terraform init
+      displayName: Init
+
+    - script: terraform validate
+      displayName: Validate
+
+    - script: terraform plan
+      displayName: Plan
+
+
+# -----------------------
+# BUILD & PUSH IMAGE
+# -----------------------
+- stage: Build
+  dependsOn: Terraform
+
+  jobs:
+  - job: docker
+    steps:
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: ACR-Service-Connection
+        repository: $(imageName)
+        command: buildAndPush
+        Dockerfile: Dockerfile
+        tags: |
+          $(tag)
+
+
+# -----------------------
+# DEPLOY TO VM
+# -----------------------
+- stage: Deploy
+  dependsOn: Build
+
+  jobs:
+  - job: deploy
+    steps:
+
+    - task: SSH@0
+      inputs:
+        sshEndpoint: AzureVM-SSH
+        runOptions: commands
+        commands: |
+          echo "Logging into ACR..."
+
+          docker login cloudtaskacr12345.azurecr.io \
+            -u $(ACR_USERNAME) \
+            -p $(ACR_PASSWORD)
+
+          echo "Pulling image..."
+
+          docker pull cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
+
+          echo "Stopping old container..."
+
+          docker stop cloudtask || true
+          docker rm cloudtask || true
+
+          echo "Starting new container..."
+
+          docker run -d -p 5000:5000 --name cloudtask \
+            cloudtaskacr12345.azurecr.io/cloudtask-pro:$(tag)
