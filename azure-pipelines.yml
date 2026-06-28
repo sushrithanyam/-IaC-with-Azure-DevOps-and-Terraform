@@ -24,14 +24,16 @@ stages:
         terraformVersion: latest
 
     - script: terraform init
+      workingDirectory: terraform
       displayName: Init
 
     - script: terraform validate
+      workingDirectory: terraform
       displayName: Validate
 
     - script: terraform plan
+      workingDirectory: terraform
       displayName: Plan
-
 
 # -----------------------
 # BUILD & PUSH IMAGE
