@@ -81,7 +81,7 @@ stages:
 
           echo "STEP 1: LOGIN"
 
-          docker login cloudtaskacr12345.azurecr.io -user "$(ACR_USERNAME)" -password "$(ACR_PASSWORD)"
+          echo "$(ACR_PASSWORD)" | docker login $(acrLogin) -u "$(ACR_USERNAME)" --password-stdin
 
           echo "STEP 2: PULL"
 
