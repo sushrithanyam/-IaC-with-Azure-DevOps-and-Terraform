@@ -80,4 +80,5 @@ stages:
           ACR_USERNAME=$(ACR_USERNAME)
           ACR_PASSWORD=$(ACR_PASSWORD)
         commands: |
-          ./deploy.sh
+          set -e
+          bash ./deploy.sh
