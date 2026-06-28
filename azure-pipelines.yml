@@ -14,7 +14,7 @@ variables:
   value: cloudtaskacr12345.azurecr.io
 
 - name: tag
-  value: $(Build.BuildId)
+  value: v1
 stages:
 
 # -----------------------
