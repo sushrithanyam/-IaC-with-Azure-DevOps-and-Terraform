@@ -21,23 +21,35 @@ stages:
   - job: tf
     steps:
 
+    # ✅ LOGIN TO AZURE FIRST (IMPORTANT)
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'AzureRM-Service-Connection'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          echo "Logged into Azure"
+
+    # Terraform install
     - task: TerraformInstaller@1
       inputs:
         terraformVersion: latest
 
+    # INIT
     - script: terraform init
       workingDirectory: terraform
       displayName: Init
 
+    # VALIDATE
     - script: terraform validate
       workingDirectory: terraform
       displayName: Validate
 
+    # PLAN
     - script: terraform plan
       workingDirectory: terraform
       displayName: Plan
-
-
+      
 # -----------------------
 # BUILD & PUSH IMAGE
 # -----------------------
