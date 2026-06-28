@@ -56,8 +56,8 @@ stages:
         containerRegistry: ACR-Service-Connection
         repository: $(imageName)
         command: buildAndPush
-        Dockerfile: Dockerfile
-        buildContext: .
+        Dockerfile: docker/Dockerfile
+        buildContext: docker
         tags: |
           $(tag)
 
