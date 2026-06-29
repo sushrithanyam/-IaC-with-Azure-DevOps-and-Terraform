@@ -8,6 +8,8 @@ CloudTask-Pro is a cloud-based task management application deployed using modern
 
 This project demonstrates **Infrastructure as Code (IaC)** using Terraform, automated CI/CD using Azure DevOps, containerization using Docker, and cloud governance using Azure Policy.
 
+CloudTask-Pro follows a 3-tier architecture consisting of a presentation layer, an application layer, and a data layer. For simplicity and cost efficiency, both the application and SQLite database are hosted within the same Docker container on a single Azure Linux Virtual Machine. In a production environment, the data tier would typically be hosted separately using a managed database service such as Azure SQL Database or Azure Database for PostgreSQL.
+
 The complete workflow automates:
 
 - Azure infrastructure provisioning
