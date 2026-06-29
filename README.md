@@ -561,10 +561,10 @@ This project demonstrates:
 
 # Author
 
-Your Name
+Sushrith Reddy Anyam
 
 GitHub:
 
 ```
-https://github.com/yourusername
+https://github.com/sushrithanyam
 ```
